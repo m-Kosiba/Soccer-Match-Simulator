@@ -1,0 +1,102 @@
+import random
+
+
+class Team:
+    def __init__(self, name):
+        self.name = name
+        self.score = 0
+        self.shots = 0
+        self.shots_on_target = 0
+
+    def take_shot(self):
+        self.shots += 1
+
+        # Determine if the shot is on target
+        on_target = random.randint(1, 100) <= 40
+
+        if on_target:
+            self.shots_on_target += 1
+
+            # Determine if the shot becomes a goal
+            goal = random.randint(1, 100) <= 30
+
+            if goal:
+                self.score += 1
+        else:
+            goal = False
+
+        return goal, on_target
+
+    def display_stats(self):
+        print(f"\n{self.name} Statistics")
+        print(f"Goals: {self.score}")
+        print(f"Total Shots: {self.shots}")
+        print(f"Shots on Target: {self.shots_on_target}")
+
+
+class SoccerMatch:
+    def __init__(self, home_team, away_team):
+        self.home_team = home_team
+        self.away_team = away_team
+        self.duration = 90
+
+    def simulate_match(self):
+        print("\n===== SOCCER MATCH SIMULATOR =====")
+        print(f"{self.home_team.name} vs. {self.away_team.name}")
+        print("Kickoff!")
+
+        # Simulate the match in five-minute intervals
+        for minute in range(5, self.duration + 1, 5):
+
+            # Give each team a chance to shoot
+            for team in [self.home_team, self.away_team]:
+                if random.randint(1, 100) <= 60:
+                    goal, on_target = team.take_shot()
+
+                    if goal:
+                        print(f"{minute}' - GOAL for {team.name}!")
+                    elif on_target:
+                        print(
+                            f"{minute}' - Shot on target by "
+                            f"{team.name}, but no goal."
+                        )
+                    else:
+                        print(f"{minute}' - Shot missed by {team.name}.")
+
+            # Display the halftime score
+            if minute == 45:
+                print("\n===== HALFTIME =====")
+                self.display_score()
+
+        print("\n===== FULL TIME =====")
+        self.display_score()
+
+        self.home_team.display_stats()
+        self.away_team.display_stats()
+
+        self.display_winner()
+
+    def display_score(self):
+        print(
+            f"{self.home_team.name} "
+            f"{self.home_team.score} - "
+            f"{self.away_team.score} "
+            f"{self.away_team.name}"
+        )
+
+    def display_winner(self):
+        if self.home_team.score > self.away_team.score:
+            print(f"\n{self.home_team.name} wins!")
+        elif self.away_team.score > self.home_team.score:
+            print(f"\n{self.away_team.name} wins!")
+        else:
+            print("\nThe match ends in a draw!")
+
+
+# Create the teams
+home = Team("Immaculata")
+away = Team("Opponent")
+
+# Create and run the match
+match = SoccerMatch(home, away)
+match.simulate_match()
